@@ -1,0 +1,6 @@
+clear;
+close;
+clc;
+
+Fs = 8000;
+send_x = send_refsignal(3, Fs, 2);
