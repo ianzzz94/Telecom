@@ -27,31 +27,40 @@ xObj = audioplayer(x,Fs_TX); % convert one second of sound to audio format
 recObj = audiorecorder(Fs_RX,16,2); % 16 bits, 1 channel
 play(xObj) % play and continue directly
 recordblocking(recObj,1); % start recording 1 second
-y = getaudiodata(recObj); % float representation of recording
+yinit = getaudiodata(recObj); % float representation of recording
 
 tx = [1/Fs_TX:1/Fs_TX: 1];
 ty = [1/Fs_RX:1/Fs_RX: 1];
-subplot(211);
-plot(tx, x,'red');
+subplot(311);
+
+for i = 1:1:Fs_RX,
+z(i) = yinit(i, 1); 
+y(i) = yinit(i, 2); 
+end
+
+plot(ty, abs(z),'red');
 hold on;
 plot(ty, abs(y),'blue');
 
 xlabel('t(s)');
-subplot(212); 
+subplot(312); 
+
+%{
 Fx = fft(x);
 Fx = fftshift(Fx);
+%}
 
-Fy = fft(y);
-Fy = fftshift(Fy);
+Ffy = fft(yinit);
+Ffy = fftshift(Ffy);
 
 for i = 1:1:Fs_RX,
-Fx(i, 1) = Fy(i, 1); 
-Fy(i, 1) = Fy(i, 2); 
+Fx(i) = Ffy(i, 1); 
+Fy(i) = Ffy(i, 2); 
 end
 
 F1 = [-Fs_TX/2: 1: Fs_TX/2-1]
 F2 = [-Fs_RX/2: 1: Fs_RX/2-1]
-plot(F1/1000, abs(Fx),'red');
-hold on;
+plot(F2/1000, abs(Fx),'red');
+subplot(313);
 plot(F2/1000, abs(Fy),'blue');
 xlabel('F(kHz)');
